@@ -1,968 +1,853 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Flash — OTP Panel</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=yes">
+<title>Flash OTP | OTP Dashboard</title>
 <style>
-:root {
-  --bg:#0f0f11;--surface:#17171a;--surface2:#1e1e22;--surface3:#26262c;
-  --border:#2e2e35;--border2:#3a3a42;--text:#f0f0f2;--text2:#9999aa;--text3:#5a5a6a;
-  --accent:#7c6ff7;--accent-bg:#1e1b3a;--accent-text:#a99ff7;
-  --green:#3ecf8e;--green-bg:#0f2a1e;--green-text:#3ecf8e;
-  --amber:#f5a623;--amber-bg:#2a1e0a;--amber-text:#f5a623;
-  --red:#f25f5c;--red-bg:#2a0f0f;--red-text:#f25f5c;
-  --radius:10px;--radius-lg:14px;
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-top: env(safe-area-inset-top, 0px);
+:root{
+  --bg:#0a0a0f;--surface:#111118;--surface2:#18181f;--surface3:#202028;
+  --border:#2a2a35;--border2:#35353f;
+  --text:#eeeef2;--text2:#8888a0;--text3:#4a4a60;
+  --accent:#6c63ff;--accent2:#8b85ff;--accent-bg:#16143a;
+  --green:#00e5a0;--green-bg:#00150f;--green-dim:#00a070;
+  --amber:#ffb340;--amber-bg:#1a1000;
+  --red:#ff5555;--red-bg:#1a0505;
+  --cyan:#00d4ff;--cyan-bg:#001a20;
+  --radius:10px;--radius-lg:14px;--radius-xl:18px;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth}
 body{
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;
-  min-height:100vh;min-height:100dvh;
-  overscroll-behavior:none;
+  min-height:100vh;min-height:100dvh;overflow-x:hidden;
 }
-button{cursor:pointer;font-family:inherit;-webkit-appearance:none}
-a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+input,select,textarea{font-family:inherit}
 
-/* ── LAYOUT ── */
-.app{display:flex;min-height:100vh;min-height:100dvh}
-
-/* Sidebar — desktop only */
-.sidebar{
-  width:240px;flex-shrink:0;background:var(--surface);
-  border-right:1px solid var(--border);display:flex;flex-direction:column;
-  position:fixed;top:0;left:0;height:100vh;z-index:200;
-  transition:transform .25s cubic-bezier(.4,0,.2,1);
-}
-.main{margin-left:240px;flex:1;display:flex;flex-direction:column;min-height:100vh}
-.content{padding:20px;max-width:900px;flex:1}
-
-/* ── SIDEBAR ── */
-.sidebar-logo{padding:20px 16px 14px;border-bottom:1px solid var(--border)}
-.logo-mark{display:flex;align-items:center;gap:10px}
-.logo-icon{
-  width:34px;height:34px;background:var(--accent);border-radius:9px;
-  display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;flex-shrink:0
-}
-.logo-text{font-size:15px;font-weight:700;letter-spacing:-.3px}
-.logo-sub{font-size:11px;color:var(--text3);margin-top:1px}
-.nav-section{padding:16px 16px 4px;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase}
-.nav-item{
-  display:flex;align-items:center;gap:10px;padding:10px 16px;
-  cursor:pointer;color:var(--text2);transition:all .15s;position:relative;
-  min-height:44px;user-select:none;
-}
-.nav-item:hover{color:var(--text);background:var(--surface2)}
-.nav-item.active{color:var(--accent-text);background:var(--accent-bg)}
-.nav-item.active::before{
-  content:'';position:absolute;left:0;top:6px;bottom:6px;
-  width:3px;background:var(--accent);border-radius:0 3px 3px 0
-}
-.nav-item i{font-size:18px;flex-shrink:0}
-.nav-label{font-size:13px;font-weight:500}
-.sidebar-footer{margin-top:auto;padding:14px 16px;border-top:1px solid var(--border)}
-
-/* ── TOPBAR (mobile) ── */
-.topbar{
-  display:none;align-items:center;justify-content:space-between;
-  padding:0 16px;height:56px;background:var(--surface);
-  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:150;
+/* ── HEADER ── */
+.header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(10,10,15,.92);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   padding-top:var(--safe-top);
 }
-.topbar-left{display:flex;align-items:center;gap:10px}
-.topbar-title{font-size:16px;font-weight:700;letter-spacing:-.3px}
-.menu-btn{
-  background:none;border:none;color:var(--text2);
-  font-size:22px;padding:6px;border-radius:var(--radius);
-  min-width:40px;min-height:40px;display:flex;align-items:center;justify-content:center;
+.header-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;max-width:900px;margin:0 auto;
 }
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),#a855f7);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;color:#fff;flex-shrink:0;
+}
+.brand-name{font-size:17px;font-weight:800;letter-spacing:-.4px}
+.brand-sub{font-size:10px;color:var(--text3);margin-top:1px;letter-spacing:.04em}
+.header-right{display:flex;align-items:center;gap:8px}
+.status-pill{
+  display:flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:600;padding:5px 10px;
+  border-radius:20px;border:1px solid var(--border2);
+  background:var(--surface2);color:var(--text2);
+  white-space:nowrap;
+}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0}
+.status-dot.ok{background:var(--green);box-shadow:0 0 6px var(--green)}
+.status-dot.err{background:var(--red)}
+.status-dot.loading{background:var(--amber);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-/* ── OVERLAY ── */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:190;backdrop-filter:blur(2px)}
-.overlay.show{display:block}
+/* ── TABS ── */
+.tabs{
+  display:flex;gap:2px;padding:8px 16px;
+  max-width:900px;margin:0 auto;overflow-x:auto;
+  scrollbar-width:none;-ms-overflow-style:none;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:var(--radius);
+  font-size:13px;font-weight:600;color:var(--text3);
+  cursor:pointer;transition:all .15s;white-space:nowrap;
+  min-height:38px;border:1px solid transparent;
+}
+.tab:hover{color:var(--text2);background:var(--surface2)}
+.tab.active{
+  color:var(--accent2);background:var(--accent-bg);
+  border-color:var(--accent);
+}
+.tab-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--green);display:none;
+}
+.tab-dot.show{display:block}
 
-/* ── BOTTOM NAV (mobile) ── */
-.bottom-nav{
-  display:none;position:fixed;bottom:0;left:0;right:0;
-  background:var(--surface);border-top:1px solid var(--border);z-index:150;
-}
-.bottom-nav-inner{
-  display:flex;justify-content:space-around;align-items:stretch;
-  padding:6px 0;padding-bottom:calc(6px + var(--safe-bottom));
-}
-.bn-item{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:2px;padding:4px 8px;border-radius:var(--radius);
-  cursor:pointer;color:var(--text3);transition:color .15s;
-  position:relative;background:none;border:none;font-family:inherit;
-  flex:1;min-height:48px;
-}
-.bn-item.active{color:var(--accent-text)}
-.bn-item i{font-size:21px}
-.bn-label{font-size:9px;font-weight:600;letter-spacing:.03em}
-.bn-dot{
-  position:absolute;top:4px;right:calc(50% - 14px);
-  width:7px;height:7px;border-radius:50%;background:var(--green);display:none;
-}
-.bn-dot.show{display:block}
-
-/* ── PAGES ── */
+/* ── MAIN ── */
+.main{max-width:900px;margin:0 auto;padding:16px 16px calc(24px + var(--safe-bottom))}
 .page{display:none}.page.active{display:block}
-.page-header{margin-bottom:18px}
-.page-title{font-size:20px;font-weight:700;letter-spacing:-.4px}
-.page-sub{font-size:13px;color:var(--text2);margin-top:3px}
 
-/* ── STAT GRID ── */
-.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+/* ── STAT ROW ── */
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+@media(min-width:600px){.stat-row{grid-template-columns:repeat(4,1fr)}}
 .stat-card{
   background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius-lg);padding:14px 14px 12px;
+  border-radius:var(--radius-lg);padding:12px 14px;
 }
-.stat-label{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
-.stat-val{font-size:26px;font-weight:800;letter-spacing:-.5px}
-.sv-green{color:var(--green)}.sv-blue{color:var(--accent-text)}
-.sv-amber{color:var(--amber)}.sv-red{color:var(--red)}
+.stat-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.stat-val{font-size:24px;font-weight:800;letter-spacing:-.5px}
+.sv-green{color:var(--green)}.sv-blue{color:var(--accent2)}.sv-amber{color:var(--amber)}.sv-cyan{color:var(--cyan)}
 
-/* ── CARDS ── */
+/* ── CARD ── */
 .card{
   background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius-lg);margin-bottom:14px;overflow:hidden;
+  border-radius:var(--radius-lg);margin-bottom:12px;overflow:hidden;
 }
 .card-head{
   display:flex;align-items:center;justify-content:space-between;
   padding:12px 16px;border-bottom:1px solid var(--border);
 }
-.card-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;color:var(--text)}
+.card-title{font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:7px}
 .card-body{padding:14px 16px}
-
-/* ── TABLES ── */
-.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table{width:100%;border-collapse:collapse;font-size:13px;min-width:440px}
-th{
-  padding:9px 12px;text-align:left;font-size:10px;font-weight:700;
-  color:var(--text3);text-transform:uppercase;letter-spacing:.06em;
-  border-bottom:1px solid var(--border);white-space:nowrap;
-}
-td{padding:11px 12px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:var(--surface2)}
-.mono{font-family:'SF Mono',Consolas,monospace;font-size:12px}
-
-/* ── PILLS ── */
-.pill{
-  display:inline-flex;align-items:center;gap:4px;
-  font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;white-space:nowrap;
-}
-.p-green{background:var(--green-bg);color:var(--green-text)}
-.p-amber{background:var(--amber-bg);color:var(--amber-text)}
-.p-red{background:var(--red-bg);color:var(--red-text)}
-.p-blue{background:var(--accent-bg);color:var(--accent-text)}
-.p-gray{background:var(--surface3);color:var(--text2);border:1px solid var(--border)}
+.card-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 
 /* ── BUTTONS ── */
 .btn{
   display:inline-flex;align-items:center;gap:6px;
-  padding:9px 15px;border-radius:var(--radius);font-size:13px;font-weight:500;
-  border:1px solid var(--border2);background:var(--surface2);color:var(--text);
-  transition:all .15s;font-family:inherit;min-height:40px;
+  padding:9px 16px;border-radius:var(--radius);
+  font-size:13px;font-weight:600;color:var(--text);
+  border:1px solid var(--border2);background:var(--surface2);
+  transition:all .15s;min-height:40px;cursor:pointer;
 }
 .btn:hover{background:var(--surface3)}.btn:active{transform:scale(.97)}
 .btn-accent{background:var(--accent);color:#fff;border-color:var(--accent)}
-.btn-accent:hover{background:#6a60e8;border-color:#6a60e8}
-.btn-danger{background:transparent;color:var(--red-text);border-color:var(--red-bg)}
-.btn-danger:hover{background:var(--red-bg)}
+.btn-accent:hover{background:#5a52e0}
+.btn-green{background:var(--green-bg);color:var(--green);border-color:var(--green-dim)}
+.btn-green:hover{background:#001f15}
+.btn-danger{background:var(--red-bg);color:var(--red);border-color:#3a1010}
+.btn-danger:hover{background:#220808}
 .btn-sm{padding:6px 11px;font-size:12px;min-height:34px}
+.btn-xs{padding:4px 8px;font-size:11px;min-height:28px}
 .btn-group{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
-/* ── FORMS ── */
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
-.form-label{font-size:12px;color:var(--text2);font-weight:600}
-input[type=text],input[type=number],select,textarea{
+/* ── FORM ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.form-grid{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+.form-label{font-size:12px;font-weight:600;color:var(--text2)}
+.form-hint{font-size:11px;color:var(--text3);margin-top:2px}
+input[type=text],input[type=number],select{
   width:100%;background:var(--surface2);border:1px solid var(--border);
   border-radius:var(--radius);color:var(--text);padding:10px 12px;
-  font-size:14px;font-family:inherit;transition:border-color .15s;
-  min-height:44px;appearance:none;-webkit-appearance:none;
+  font-size:14px;transition:border-color .15s;
+  min-height:44px;-webkit-appearance:none;appearance:none;
 }
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
-textarea{resize:vertical;min-height:88px;line-height:1.5}
-.form-card{
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:var(--radius-lg);padding:16px;margin-bottom:14px;
-}
+input:focus,select:focus{outline:none;border-color:var(--accent)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+.form-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;margin-bottom:12px}
 
-/* ── ROWS ── */
-.console-row{
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;min-width:520px}
+th{
+  padding:9px 12px;text-align:left;font-size:10px;font-weight:700;
+  color:var(--text3);text-transform:uppercase;letter-spacing:.07em;
+  border-bottom:1px solid var(--border);white-space:nowrap;
+}
+td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:13px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.mono{font-family:'SF Mono',Consolas,'Courier New',monospace;font-size:12px}
+
+/* ── PILLS ── */
+.pill{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:11px;font-weight:700;padding:3px 9px;
+  border-radius:20px;white-space:nowrap;
+}
+.p-green{background:var(--green-bg);color:var(--green)}
+.p-amber{background:var(--amber-bg);color:var(--amber)}
+.p-red{background:var(--red-bg);color:var(--red)}
+.p-blue{background:var(--accent-bg);color:var(--accent2)}
+.p-cyan{background:var(--cyan-bg);color:var(--cyan)}
+.p-gray{background:var(--surface3);color:var(--text2);border:1px solid var(--border)}
+
+/* ── CONSOLE ROW ── */
+.c-row{
   display:flex;align-items:flex-start;gap:10px;
+  padding:11px 16px;border-bottom:1px solid var(--border);
+}
+.c-row:last-child{border-bottom:none}
+.c-left{flex:1;min-width:0}
+.c-range{font-size:13px;font-weight:700;font-family:'SF Mono',Consolas,monospace;word-break:break-all;color:var(--text)}
+.c-msg{font-size:12px;color:var(--text2);margin-top:2px;word-break:break-word;line-height:1.5}
+.c-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.c-time{font-size:10px;color:var(--text3);white-space:nowrap}
+
+/* ── SPAM ROW ── */
+.spam-row{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
   padding:12px 16px;border-bottom:1px solid var(--border);
 }
-.console-row:last-child{border-bottom:none}
-.console-left{flex:1;min-width:0}
-.console-range{font-size:13px;font-weight:600;font-family:'SF Mono',Consolas,monospace;word-break:break-all}
-.console-msg{font-size:12px;color:var(--text2);margin-top:2px;word-break:break-word}
-.console-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
-.console-time{font-size:10px;color:var(--text3);white-space:nowrap}
+.spam-row:last-child{border-bottom:none}
+.spam-rid{font-size:13px;font-weight:700;font-family:'SF Mono',Consolas,monospace;margin-bottom:3px;word-break:break-all}
+.spam-meta{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 
-.prem-row{
-  display:flex;align-items:flex-start;justify-content:space-between;
-  gap:12px;padding:13px 16px;border-bottom:1px solid var(--border);
+/* ── LIVE DOT ── */
+.live-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--red);
+  display:inline-block;animation:blink 1.1s infinite;margin-right:4px;vertical-align:middle;flex-shrink:0;
 }
-.prem-row:last-child{border-bottom:none}
-.prem-name{font-size:13px;font-weight:600;margin-bottom:2px}
-.prem-meta{font-size:11px;color:var(--text2);font-family:'SF Mono',Consolas,monospace;word-break:break-all}
-
-/* ── TOGGLE ── */
-.owner-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-.owner-tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px}
-.owner-tile-label{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.owner-tile-val{font-size:22px;font-weight:800}
-.toggle-row{display:flex;align-items:center;gap:10px;cursor:pointer}
-.toggle-sw{width:42px;height:24px;border-radius:12px;background:var(--surface3);border:1px solid var(--border2);position:relative;transition:all .2s;flex-shrink:0}
-.toggle-sw.on{background:var(--green);border-color:var(--green)}
-.toggle-knob{width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:1px;left:1px;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
-.toggle-sw.on .toggle-knob{left:19px}
-.counter-row{display:flex;align-items:center;gap:10px}
-.counter-btn{width:30px;height:30px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.counter-btn:hover{background:var(--surface3)}
-
-/* ── TABS ── */
-.tab-row{display:flex;gap:4px;margin-bottom:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:3px}
-.tab-btn{flex:1;padding:8px 6px;border-radius:8px;font-size:12px;font-weight:600;border:none;background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;font-family:inherit;min-height:36px}
-.tab-btn.active{background:var(--accent-bg);color:var(--accent-text)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
 
 /* ── MISC ── */
-.live-dot{width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block;animation:blink 1.1s infinite;margin-right:4px;vertical-align:middle}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-.empty-state{text-align:center;padding:40px 20px;color:var(--text3);font-size:13px}
-.empty-state i{font-size:34px;display:block;margin-bottom:10px;opacity:.35}
-.info-bar{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:11px 14px;font-size:12px;color:var(--text2);display:flex;align-items:flex-start;gap:8px;margin-bottom:14px;line-height:1.6}
-.bc-result{font-size:12px;color:var(--green-text);margin-top:8px;display:none;padding:8px 12px;background:var(--green-bg);border-radius:var(--radius)}
-.loading{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--text3);padding:14px 16px}
-.spinner{width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+.empty{text-align:center;padding:36px 20px;color:var(--text3);font-size:13px}
+.empty-icon{font-size:28px;margin-bottom:8px;opacity:.3}
+.spinner{
+  width:14px;height:14px;border:2px solid var(--border2);
+  border-top-color:var(--accent);border-radius:50%;
+  animation:spin .65s linear infinite;flex-shrink:0;
+}
 @keyframes spin{to{transform:rotate(360deg)}}
-.api-status{display:flex;align-items:center;gap:6px;font-size:11px;padding:5px 11px;border-radius:20px;background:var(--surface2);border:1px solid var(--border)}
-.api-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0}
-.api-dot.ok{background:var(--green)}.api-dot.err{background:var(--red)}.api-dot.loading{background:var(--amber)}
+.loading-row{display:flex;align-items:center;gap:8px;padding:16px;font-size:12px;color:var(--text3)}
 .toast{
-  position:fixed;bottom:calc(74px + var(--safe-bottom));left:50%;
-  transform:translateX(-50%) translateY(8px);
-  background:var(--surface3);border:1px solid var(--border2);color:var(--text);
-  padding:10px 20px;border-radius:var(--radius-lg);font-size:13px;font-weight:500;
-  z-index:999;opacity:0;transition:opacity .2s, transform .2s;
-  pointer-events:none;white-space:nowrap;max-width:90vw;
+  position:fixed;
+  bottom:calc(20px + var(--safe-bottom));
+  left:50%;transform:translateX(-50%) translateY(6px);
+  background:var(--surface3);border:1px solid var(--border2);
+  color:var(--text);padding:10px 20px;border-radius:var(--radius-lg);
+  font-size:13px;font-weight:500;z-index:999;
+  opacity:0;transition:opacity .2s,transform .2s;
+  pointer-events:none;white-space:nowrap;max-width:88vw;text-align:center;
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .divider{height:1px;background:var(--border);margin:12px 0}
-
-/* ── MOBILE OVERRIDES ── */
-@media(max-width:768px){
-  .sidebar{transform:translateX(-100%)}
-  .sidebar.open{transform:translateX(0)}
-  .main{margin-left:0}
-  .topbar{display:flex}
-  .bottom-nav{display:block}
-  .content{
-    padding:14px 14px;
-    padding-bottom:calc(80px + var(--safe-bottom));
-  }
-  .stat-grid{grid-template-columns:1fr 1fr;gap:8px}
-  .stat-card{padding:12px}
-  .stat-val{font-size:22px}
-  .form-row{grid-template-columns:1fr}
-  .owner-grid{grid-template-columns:1fr 1fr}
-  .page-title{font-size:18px}
-  .toast{bottom:calc(68px + var(--safe-bottom))}
-  table{font-size:12px}
-  th,td{padding:9px 10px}
+.info-bar{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:10px 13px;border-radius:var(--radius);
+  background:var(--accent-bg);border:1px solid #2a2860;
+  font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;
 }
-@media(min-width:769px){
-  .stat-grid{grid-template-columns:repeat(4,1fr)}
+.otp-code{
+  font-size:20px;font-weight:800;font-family:'SF Mono',Consolas,monospace;
+  color:var(--green);letter-spacing:.1em;
 }
 </style>
 </head>
 <body>
-<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 <div class="toast" id="toast"></div>
 
-<div class="app">
-<!-- SIDEBAR -->
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-logo">
-    <div class="logo-mark">
-      <div class="logo-icon"><i class="ti ti-bolt"></i></div>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-icon">⚡</div>
       <div>
-        <div class="logo-text">Flash OTP</div>
-        <div class="logo-sub">Panel kontrol</div>
+        <div class="brand-name">Flash OTP</div>
+        <div class="brand-sub">Flash OTP • Real-time OTP</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="status-pill">
+        <div class="status-dot loading" id="api-dot"></div>
+        <span id="api-label">Connecting...</span>
       </div>
     </div>
   </div>
-  <div class="nav-section">Menu</div>
-  <div class="nav-item active" onclick="nav('dashboard',this)"><i class="ti ti-layout-dashboard"></i><span class="nav-label">Dashboard</span></div>
-  <div class="nav-item" onclick="nav('numbers',this)"><i class="ti ti-device-mobile"></i><span class="nav-label">Nomor</span></div>
-  <div class="nav-item" onclick="nav('console',this)"><i class="ti ti-terminal"></i><span class="nav-label">Console</span></div>
-  <div class="nav-item" onclick="nav('otp',this)"><i class="ti ti-key"></i><span class="nav-label">Cek OTP</span></div>
-  <div class="nav-item" id="nav-owner" style="display:none" onclick="nav('owner',this)"><i class="ti ti-shield"></i><span class="nav-label">Owner panel</span></div>
-  <div class="sidebar-footer">
-    <div style="display:flex;align-items:center;justify-content:space-between;">
-      <div class="api-status" id="api-status">
-        <div class="api-dot loading" id="api-dot"></div>
-        <span id="api-label">Menghubungkan...</span>
-      </div>
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" id="tab-numbers" onclick="switchTab('numbers')">
+      📱 Get Number <span class="tab-dot" id="dot-numbers"></span>
     </div>
+    <div class="tab" id="tab-console" onclick="switchTab('console')">
+      🖥 Console
+    </div>
+    <div class="tab" id="tab-otp" onclick="switchTab('otp')">
+      🔑 OTP Log <span class="tab-dot" id="dot-otp"></span>
+    </div>  
   </div>
 </div>
 
-<!-- TOPBAR mobile -->
-<div class="topbar">
-  <div class="topbar-left">
-    <button class="menu-btn" onclick="openSidebar()"><i class="ti ti-menu-2"></i></button>
-    <div class="topbar-title" id="topbar-title">Dashboard</div>
-  </div>
-  <div class="api-status" id="api-status-top" style="font-size:10px;padding:4px 8px">
-    <div class="api-dot loading" id="api-dot-top"></div>
-  </div>
-</div>
-
+<!-- MAIN -->
 <div class="main">
-<div class="content">
 
-<!-- DASHBOARD -->
-<div class="page active" id="page-dashboard">
-  <div class="page-header">
-    <div class="page-title">Dashboard</div>
-    <div class="page-sub">Ringkasan sistem Flash OTP</div>
+<!-- ── PAGE: NUMBERS ── -->
+<div class="page active" id="page-numbers">
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-label">Active</div><div class="stat-val sv-green" id="st-active">0</div></div>
+    <div class="stat-card"><div class="stat-label">OTP Got</div><div class="stat-val sv-cyan" id="st-otp">0</div></div>
+    <div class="stat-card"><div class="stat-label">Expired</div><div class="stat-val sv-amber" id="st-expired">0</div></div>
+    <div class="stat-card"><div class="stat-label">Retrying</div><div class="stat-val sv-blue" id="st-spam">0</div></div>
   </div>
-  <div class="stat-grid">
-    <div class="stat-card"><div class="stat-label">Nomor aktif</div><div class="stat-val sv-green" id="d-active">—</div></div>
-    <div class="stat-card"><div class="stat-label">OTP masuk</div><div class="stat-val sv-blue" id="d-otp">—</div></div>
-    <div class="stat-card"><div class="stat-label">Total nomor</div><div class="stat-val" id="d-total">—</div></div>
-    <div class="stat-card"><div class="stat-label">Console log</div><div class="stat-val sv-amber" id="d-logs">—</div></div>
-  </div>
+
   <div class="card">
     <div class="card-head">
-      <div class="card-title"><i class="ti ti-device-mobile"></i> Nomor aktif terbaru</div>
-      <button class="btn btn-sm" onclick="loadNumbers()"><i class="ti ti-refresh"></i></button>
+      <div class="card-title">📱 Get Number</div>
+      <button class="btn btn-sm btn-accent" onclick="toggleForm('form-get')">+ New</button>
     </div>
-    <div class="tbl-wrap">
-      <table><thead><tr><th>Nomor</th><th>Negara</th><th>Operator</th><th>Sisa</th><th>OTP</th></tr></thead>
-      <tbody id="d-num-body"><tr><td colspan="5"><div class="loading"><div class="spinner"></div>Memuat...</div></td></tr></tbody>
-      </table>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-head">
-      <div class="card-title"><i class="ti ti-terminal"></i> Console terbaru</div>
-      <button class="btn btn-sm" onclick="loadConsole()"><i class="ti ti-refresh"></i></button>
-    </div>
-    <div id="d-console-list"><div class="loading"><div class="spinner"></div>Memuat...</div></div>
-  </div>
-</div>
-
-<!-- NUMBERS -->
-<div class="page" id="page-numbers">
-  <div class="page-header">
-    <div class="page-title">Manajemen nomor</div>
-    <div class="page-sub">Ambil dan pantau nomor aktif</div>
-  </div>
-  <div class="btn-group">
-    <button class="btn btn-accent" onclick="toggleForm('add-num-form')"><i class="ti ti-plus"></i> Ambil nomor</button>
-    <button class="btn" onclick="loadNumbers()"><i class="ti ti-refresh"></i> Refresh</button>
-  </div>
-  <div class="form-card" id="add-num-form" style="display:none">
-    <div class="form-row">
-      <div class="form-group">
-        <div class="form-label">RID / Range</div>
-        <input type="text" id="rid-input" placeholder="Contoh: 224655555515">
-      </div>
-      <div class="form-group">
-        <div class="form-label">Tipe</div>
-        <select id="rid-type">
-          <option value="single">Single RID</option>
-          <option value="pattern">Pattern (x wildcard)</option>
-        </select>
-      </div>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-accent" id="ambil-btn" onclick="doAmbilNomor()"><i class="ti ti-bolt"></i> Ambil sekarang</button>
-      <button class="btn" onclick="toggleForm('add-num-form')">Batal</button>
-    </div>
-    <div id="ambil-result" style="margin-top:10px;font-size:12px;color:var(--text2)"></div>
-  </div>
-  <div class="card">
-    <div class="card-head"><div class="card-title"><i class="ti ti-list"></i> Daftar nomor</div></div>
-    <div class="tbl-wrap">
-      <table><thead><tr><th>Nomor</th><th>Negara</th><th>Operator</th><th>RID</th><th>Status</th><th>Sisa</th><th>OTP</th><th></th></tr></thead>
-      <tbody id="num-body"><tr><td colspan="8"><div class="loading"><div class="spinner"></div>Memuat...</div></td></tr></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- CONSOLE -->
-<div class="page" id="page-console">
-  <div class="page-header">
-    <div class="page-title">Console global</div>
-    <div class="page-sub">Monitor OTP masuk real-time dari API</div>
-  </div>
-  <div class="btn-group">
-    <button class="btn" id="live-btn" onclick="toggleLive()">
-      <i class="ti ti-player-play" id="live-icon"></i>
-      <span id="live-label">Start live</span>
-    </button>
-    <button class="btn" onclick="loadConsole()"><i class="ti ti-refresh"></i> Reload</button>
-  </div>
-  <div class="card">
-    <div class="card-head">
-      <div class="card-title" id="console-title"><i class="ti ti-terminal"></i> Console — 15 menit terakhir</div>
-    </div>
-    <div id="console-list"><div class="loading"><div class="spinner"></div>Memuat...</div></div>
-  </div>
-</div>
-
-<!-- OTP -->
-<div class="page" id="page-otp">
-  <div class="page-header">
-    <div class="page-title">Cek OTP</div>
-    <div class="page-sub">Pantau status OTP semua nomor</div>
-  </div>
-  <div class="tab-row">
-    <button class="tab-btn active" id="otp-tab-pending" onclick="otpTab('pending')">Pending</button>
-    <button class="tab-btn" id="otp-tab-success" onclick="otpTab('success')">Berhasil</button>
-    <button class="tab-btn" id="otp-tab-failed" onclick="otpTab('failed')">Gagal</button>
-  </div>
-  <div class="card"><div id="otp-list"><div class="loading"><div class="spinner"></div>Memuat...</div></div></div>
-</div>
-
-<!-- OWNER -->
-<div class="page" id="page-owner">
-  <div class="page-header">
-    <div class="page-title">Owner panel</div>
-    <div class="page-sub">Manajemen bot dan user premium</div>
-  </div>
-  <div class="owner-grid">
-    <div class="owner-tile">
-      <div class="owner-tile-label"><i class="ti ti-robot"></i> Status bot</div>
-      <div class="toggle-row" onclick="toggleBot()">
-        <div class="toggle-sw on" id="bot-sw"><div class="toggle-knob"></div></div>
-        <span id="bot-lbl" style="font-size:13px;font-weight:600">ON</span>
-      </div>
-    </div>
-    <div class="owner-tile">
-      <div class="owner-tile-label"><i class="ti ti-antenna"></i> Monitor</div>
-      <div class="toggle-row" onclick="toggleMonitor()">
-        <div class="toggle-sw" id="mon-sw"><div class="toggle-knob"></div></div>
-        <span id="mon-lbl" style="font-size:13px;font-weight:600">OFF</span>
-      </div>
-    </div>
-    <div class="owner-tile">
-      <div class="owner-tile-label"><i class="ti ti-star"></i> User premium</div>
-      <div class="owner-tile-val sv-amber" id="o-prem-count">0</div>
-    </div>
-    <div class="owner-tile">
-      <div class="owner-tile-label"><i class="ti ti-lock"></i> Limit free</div>
-      <div class="counter-row">
-        <div class="owner-tile-val" id="o-limit">3</div>
-        <div style="display:flex;flex-direction:column;gap:3px">
-          <button class="counter-btn" onclick="chLimit(1)"><i class="ti ti-chevron-up" style="font-size:14px"></i></button>
-          <button class="counter-btn" onclick="chLimit(-1)"><i class="ti ti-chevron-down" style="font-size:14px"></i></button>
+    <div class="form-box" id="form-get" style="display:none;border-radius:0;border:none;border-bottom:1px solid var(--border);margin:0">
+      <div class="info-bar">ℹ️ Enter Range ID — XXX suffix is auto-stripped before sending.</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <div class="form-label">Range ID</div>
+          <input type="text" id="inp-rid" placeholder="e.g. 62888888888" oninput="stripXXX(this)">
+          <div class="form-hint">XXX will be auto-removed</div>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Type</div>
+          <select id="inp-type">
+            <option value="single">Single RID</option>
+          </select>
         </div>
       </div>
+      <div class="form-group">
+        <div class="form-label">Quantity (pattern mode)</div>
+        <input type="number" id="inp-qty" value="1" min="1" max="50">
+      </div>
+      <div class="btn-group" style="margin-bottom:0">
+        <button class="btn btn-accent" id="btn-get" onclick="doGetNumber()">⚡ Get Number</button>
+        <button class="btn" onclick="toggleForm('form-get')">Cancel</button>
+      </div>
+      <div id="get-result" style="margin-top:10px;font-size:12px;color:var(--text2)"></div>
+    </div>
+    <div class="card-head" style="border-top:none;border-bottom:1px solid var(--border)">
+      <div class="card-title">📋 Live Inbox & OTP</div>
+      <div class="card-actions">
+        <button class="btn btn-sm" onclick="pollAllOtp()">🔄 Check OTP</button>
+        <button class="btn btn-sm btn-danger" onclick="clearAll()">🗑 Clear All</button>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Country</th><th>Phone Number</th><th>Range</th>
+            <th>OTP Code</th><th>Expires In</th><th>Status</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="num-body">
+          <tr><td colspan="7"><div class="empty"><div class="empty-icon">📱</div>No numbers allocated</div></td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
+</div>
+
+<!-- ── PAGE: CONSOLE ── -->
+<div class="page" id="page-console">
   <div class="card">
     <div class="card-head">
-      <div class="card-title"><i class="ti ti-star"></i> Manajemen premium</div>
-      <button class="btn btn-sm btn-accent" onclick="toggleForm('add-prem-form')"><i class="ti ti-plus"></i> Tambah</button>
-    </div>
-    <div class="card-body" id="add-prem-form" style="display:none;border-bottom:1px solid var(--border)">
-      <div class="form-row">
-        <div class="form-group"><div class="form-label">Telegram ID</div><input type="text" id="p-uid" placeholder="123456789"></div>
-        <div class="form-group"><div class="form-label">Durasi (hari)</div><input type="number" id="p-days" value="30"></div>
-      </div>
-      <div class="form-group"><div class="form-label">Username</div><input type="text" id="p-uname" placeholder="@username"></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-accent" onclick="addPrem()">Tambah premium</button>
-        <button class="btn" onclick="toggleForm('add-prem-form')">Batal</button>
+      <div class="card-title" id="console-title">🖥 Global Console Feed</div>
+      <div class="card-actions">
+        <button class="btn btn-sm" id="btn-live" onclick="toggleLive()">▶ Start Live</button>
+        <button class="btn btn-sm" onclick="loadConsole()">🔄 Sync</button>
       </div>
     </div>
-    <div id="prem-list"><div class="empty-state"><i class="ti ti-star"></i>Belum ada user premium</div></div>
+    <div id="console-body">
+      <div class="loading-row"><div class="spinner"></div>Loading...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PAGE: OTP LOG ── -->
+<div class="page" id="page-otp">
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">🔑 My OTP History</div>
+      <div class="card-actions">
+        <button class="btn btn-sm btn-accent" onclick="loadOtpSuccess()">🔄 Refresh</button>
+        <button class="btn btn-sm btn-danger" onclick="clearOtpLog()">🗑 Clear</button>
+      </div>
+    </div>
+    <div id="otp-body">
+      <div class="loading-row"><div class="spinner"></div>Loading...</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">📊 OTP by Status</div>
+      <div class="card-actions">
+        <button class="btn btn-xs p-green" onclick="filterOtp('success')">Success</button>
+        <button class="btn btn-xs p-amber" onclick="filterOtp('pending')">Pending</button>
+        <button class="btn btn-xs p-red" onclick="filterOtp('failed')">Failed</button>
+        <button class="btn btn-xs" onclick="filterOtp('all')">All</button>
+      </div>
+    </div>
+    <div id="otp-filter-body">
+      <div class="empty"><div class="empty-icon">🔑</div>Select a filter above</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PAGE: SPAM/RETRY ── -->
+<div class="page" id="page-spam">
+  <div class="info-bar">
+    ⚡ Auto-Retry sends a new getnum request every 3s until a number is returned, then stops automatically. Max 20 minutes per RID.
+  </div>
+  <div class="btn-group">
+    <button class="btn btn-accent" onclick="toggleForm('form-spam')">+ Add RID</button>
+    <button class="btn btn-danger" onclick="stopAllSpam()">⏹ Stop All</button>
+  </div>
+  <div class="form-box" id="form-spam" style="display:none">
+    <div class="form-group">
+      <div class="form-label">Target Range ID</div>
+      <input type="text" id="inp-spam-rid" placeholder="e.g. 224655555515">
+    </div>
+    <div class="btn-group" style="margin-bottom:0">
+      <button class="btn btn-accent" onclick="addSpam()">⚡ Start Retry</button>
+      <button class="btn" onclick="toggleForm('form-spam')">Cancel</button>
+    </div>
   </div>
   <div class="card">
-    <div class="card-head"><div class="card-title"><i class="ti ti-speakerphone"></i> Broadcast ke premium</div></div>
-    <div class="card-body">
-      <textarea id="bc-msg" placeholder="Tulis pesan broadcast..."></textarea>
-      <div style="margin-top:10px"><button class="btn btn-accent" onclick="doBroadcast()"><i class="ti ti-send"></i> Kirim broadcast</button></div>
-      <div class="bc-result" id="bc-res"></div>
-    </div>
+    <div class="card-head"><div class="card-title">⚡ Active Retries</div></div>
+    <div id="spam-body"><div class="empty"><div class="empty-icon">⚡</div>No active retries</div></div>
   </div>
 </div>
 
-</div></div><!-- /content /main -->
-</div><!-- /app -->
-
-<!-- BOTTOM NAV mobile -->
-<div class="bottom-nav">
-  <div class="bottom-nav-inner">
-    <button class="bn-item active" id="bn-dashboard" onclick="nav('dashboard',null,'dashboard')">
-      <i class="ti ti-layout-dashboard"></i><span class="bn-label">Home</span>
-    </button>
-    <button class="bn-item" id="bn-numbers" onclick="nav('numbers',null,'numbers')">
-      <i class="ti ti-device-mobile"></i><span class="bn-label">Nomor</span>
-      <span class="bn-dot" id="bn-dot-numbers"></span>
-    </button>
-    <button class="bn-item" id="bn-console" onclick="nav('console',null,'console')">
-      <i class="ti ti-terminal"></i><span class="bn-label">Console</span>
-    </button>
-    <button class="bn-item" id="bn-otp" onclick="nav('otp',null,'otp')">
-      <i class="ti ti-key"></i><span class="bn-label">OTP</span>
-    </button>
-  </div>
-</div>
+</div><!-- /main -->
 
 <script>
-// ══ CONFIG — loaded from /api/env ══
-let API_KEY  = '';
-let OWNER_ID = '';
-let BASE_URL = '';
-
-async function loadEnv() {
-  try {
-    const r = await fetch('/api/env');
-    if (!r.ok) throw new Error('env fetch failed');
-    const d = await r.json();
-    API_KEY  = d.API_KEY  || '';
-    OWNER_ID = d.OWNER_ID || '';
-    BASE_URL = d.BASE_URL || '';
-  } catch(e) {
-    console.error('Gagal memuat config:', e);
-    setApiStatus('err', 'Config error');
-  }
-}
+// ══ CONFIG ══
+const API_KEY  = 'MY3EV94320Y';
+const OWNER_ID = '7406640933';
+const BASE_URL = 'https://api.2oo9.cloud/MXS47FLFX0U/tness/@public/api';
 
 // ══ STATE ══
-let numbers      = [];
-let premiumUsers = {};
-let botOn        = true;
-let monOn        = false;
-let freeLimit    = 3;
-let liveInterval = null;
-let currentOtpTab = 'pending';
-let currentPage   = 'dashboard';
+let numbers     = [];   // { full_number, national_number, country, operator, rid, taken_at, status, otp_status, otp_code }
+let spamMap     = {};   // rid → { interval, started }
+let liveTimer   = null;
+let refreshTimer = null;
+let otpLogCache = [];
 
 // ══ API ══
-async function apiGet(endpoint) {
-  const r = await fetch(BASE_URL + endpoint, {
-    headers: { 'mauthapi': API_KEY, 'Content-Type': 'application/json' }
+async function apiGet(ep) {
+  const r = await fetch(BASE_URL + ep, {
+    headers:{ 'mauthapi': API_KEY, 'Content-Type': 'application/json' }
   });
   return r.json();
 }
-async function apiPost(endpoint, body) {
-  const r = await fetch(BASE_URL + endpoint, {
-    method: 'POST',
-    headers: { 'mauthapi': API_KEY, 'Content-Type': 'application/json' },
+async function apiPost(ep, body) {
+  const r = await fetch(BASE_URL + ep, {
+    method:'POST',
+    headers:{ 'mauthapi': API_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
   return r.json();
 }
 
-function setApiStatus(state, label) {
-  ['api-dot','api-dot-top'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.className = 'api-dot ' + state;
-  });
-  const l = document.getElementById('api-label');
-  if (l) l.textContent = label;
+// ══ STATUS ══
+function setStatus(state, label) {
+  const dot = document.getElementById('api-dot');
+  const lbl = document.getElementById('api-label');
+  dot.className = 'status-dot ' + state;
+  lbl.textContent = label;
 }
-
-async function checkApiStatus() {
-  setApiStatus('loading', 'Menghubungkan...');
+async function checkStatus() {
+  setStatus('loading','Connecting...');
   try {
     const res = await apiGet('/console');
-    if (res?.meta?.code === 200) {
-      setApiStatus('ok', 'API terhubung');
-    } else {
-      setApiStatus('err', 'API error');
-    }
-  } catch(e) {
-    setApiStatus('err', 'Tidak terhubung');
-  }
-}
-
-async function apiGetNumber(rid) {
-  try {
-    const res = await apiPost('/getnum', { rid });
-    if (res?.meta?.code === 200) return res.data;
-  } catch(e) {}
-  return null;
-}
-
-async function apiGetConsole() {
-  try {
-    const res = await apiGet('/console');
-    if (res?.meta?.code === 200) return res.data?.hits || [];
-  } catch(e) {}
-  return [];
-}
-
-async function apiGetSuccessOtp() {
-  try {
-    const res = await apiGet('/success-otp');
-    if (res?.meta?.code === 200) return res.data?.otps || [];
-  } catch(e) {}
-  return [];
+    if (res?.meta?.code === 200) setStatus('ok','Online');
+    else setStatus('err','API Error');
+  } catch(e) { setStatus('err','Offline'); }
 }
 
 // ══ HELPERS ══
-function timeLeft(ta) {
-  const left = Math.max(0, Math.round((new Date(ta).getTime() + 20*60000 - Date.now()) / 60000));
-  return left + 'm';
-}
-function fmtTime(ts) {
-  return new Date(ts).toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
-}
-function toggleForm(id) {
-  const el = document.getElementById(id);
-  el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}
-function showToast(msg, dur=2500) {
+function toast(msg, dur=2500) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), dur);
+  setTimeout(()=>t.classList.remove('show'), dur);
 }
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-// ══ COUNTS ══
-function updateCounts() {
-  const active = numbers.filter(n => n.status === 'active').length;
-  const otpOk  = numbers.filter(n => n.otp_status === 'success').length;
-  document.getElementById('d-active').textContent = active;
-  document.getElementById('d-otp').textContent    = otpOk;
-  document.getElementById('d-total').textContent  = numbers.length;
-  const bd = document.getElementById('bn-dot-numbers');
-  if (bd) bd.className = 'bn-dot' + (active > 0 ? ' show' : '');
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+function fmtTime(ts){ return new Date(ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
+function timeLeft(ta){
+  const ms = new Date(ta).getTime() + 20*60000 - Date.now();
+  if (ms <= 0) return 'Expired';
+  const m = Math.floor(ms/60000), s = Math.floor((ms%60000)/1000);
+  return m + 'm ' + s + 's';
 }
-
-// ══ NAV ══
-const pageTitles = {
-  dashboard:'Dashboard', numbers:'Nomor',
-  console:'Console', otp:'Cek OTP', owner:'Owner panel'
-};
-function nav(page, sideEl, bnKey) {
-  currentPage = page;
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  if (sideEl) sideEl.classList.add('active');
-  document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active'));
-  const bn = document.getElementById('bn-' + (bnKey || page));
-  if (bn) bn.classList.add('active');
-  document.getElementById('topbar-title').textContent = pageTitles[page] || page;
-  closeSidebar();
-  if (page === 'dashboard') { loadNumbers(); loadConsole(); }
-  if (page === 'numbers')   loadNumbers();
-  if (page === 'console')   loadConsole();
-  if (page === 'otp')       loadOtp(currentOtpTab);
-  if (page === 'owner')     renderOwner();
+function toggleForm(id){
+  const el = document.getElementById(id);
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
-function openSidebar()  {
-  document.getElementById('sidebar').classList.add('open');
-  document.getElementById('overlay').classList.add('show');
+function stripXXX(inp){
+  inp.value = inp.value.replace(/xxx$/i,'');
 }
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('overlay').classList.remove('show');
+function updateDots(){
+  const active = numbers.filter(n=>n.status==='active').length;
+  const otpOk  = numbers.filter(n=>n.otp_status==='success').length;
+  const spamN  = Object.keys(spamMap).length;
+  document.getElementById('st-active').textContent  = active;
+  document.getElementById('st-otp').textContent     = otpOk;
+  document.getElementById('st-expired').textContent = numbers.filter(n=>n.status==='expired').length;
+  document.getElementById('st-spam').textContent    = spamN;
+  document.getElementById('dot-numbers').className  = 'tab-dot' + (active>0?' show':'');
+  document.getElementById('dot-otp').className      = 'tab-dot' + (otpOk>0?' show':'');
+  document.getElementById('dot-spam').className     = 'tab-dot' + (spamN>0?' show':'');
 }
 
-// ══ NUMBERS ══
-async function loadNumbers() {
-  updateCounts();
-  const active = numbers.filter(n => n.status === 'active').slice(0, 5);
-
-  const dtb = document.getElementById('d-num-body');
-  if (dtb) {
-    if (!active.length) {
-      dtb.innerHTML = '<tr><td colspan="5"><div class="empty-state"><i class="ti ti-device-mobile"></i>Belum ada nomor aktif</div></td></tr>';
-    } else {
-      dtb.innerHTML = active.map(n => `<tr>
-        <td class="mono">${n.full_number}</td>
-        <td>${n.country}</td><td>${n.operator}</td>
-        <td>${n.status==='active'?timeLeft(n.taken_at):'—'}</td>
-        <td><span class="pill ${n.otp_status==='success'?'p-green':n.otp_status==='failed'?'p-red':'p-amber'}">${n.otp_message||n.otp_status}</span></td>
-      </tr>`).join('');
-    }
-  }
-
-  const tb = document.getElementById('num-body');
-  if (!tb) return;
-  if (!numbers.length) {
-    tb.innerHTML = '<tr><td colspan="8"><div class="empty-state"><i class="ti ti-device-mobile"></i>Belum ada nomor</div></td></tr>';
-    return;
-  }
-  tb.innerHTML = numbers.map((n, i) => `<tr>
-    <td class="mono">${n.full_number}</td>
-    <td>${n.country}</td><td>${n.operator}</td>
-    <td class="mono" style="font-size:11px">${n.rid}</td>
-    <td><span class="pill ${n.status==='active'?'p-green':'p-gray'}">${n.status}</span></td>
-    <td>${n.status==='active'?timeLeft(n.taken_at):'—'}</td>
-    <td><span class="pill ${n.otp_status==='success'?'p-green':n.otp_status==='failed'?'p-red':'p-amber'}">${n.otp_message||n.otp_status}</span></td>
-    <td><button class="btn btn-sm btn-danger" onclick="delNum(${i})"><i class="ti ti-trash"></i></button></td>
-  </tr>`).join('');
+// ══ TAB NAV ══
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.getElementById('page-'+tab).classList.add('active');
+  if (tab==='console') loadConsole();
+  if (tab==='otp')     { loadOtpSuccess(); filterOtp('all'); }
+  if (tab==='spam')    renderSpam();
 }
 
-function delNum(i) {
-  numbers.splice(i, 1);
-  loadNumbers(); updateCounts();
-}
+// ══ GET NUMBER ══
+async function doGetNumber(){
+  const rid  = document.getElementById('inp-rid').value.trim().replace(/xxx$/i,'');
+  const type = document.getElementById('inp-type').value;
+  const qty  = parseInt(document.getElementById('inp-qty').value)||1;
+  if (!rid){ toast('Enter a Range ID first'); return; }
 
-async function doAmbilNomor() {
-  const rid  = document.getElementById('rid-input').value.trim();
-  const type = document.getElementById('rid-type').value;
-  if (!rid) return;
-  const btn = document.getElementById('ambil-btn');
-  const res = document.getElementById('ambil-result');
+  const btn = document.getElementById('btn-get');
+  const res = document.getElementById('get-result');
   btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> Mengambil...';
+  btn.innerHTML = '<div class="spinner"></div> Getting...';
   res.textContent = '';
-  res.style.color = 'var(--text2)';
 
-  if (type === 'pattern') {
-    const rids = generateRids(rid);
-    if (rids.length > 500) {
-      res.textContent = '⚠️ Terlalu banyak kombinasi (maks 500).';
-      btn.disabled = false;
-      btn.innerHTML = '<i class="ti ti-bolt"></i> Ambil sekarang';
-      return;
+  if (type === 'pattern'){
+    const rids = generateRids(rid, qty);
+    if (rids.length > 100){ res.textContent='⚠️ Too many combos (max 100).'; btn.disabled=false; btn.innerHTML='⚡ Get Number'; return; }
+    let ok=0,fail=0;
+    for (const r of rids){
+      const nd = await apiGetNum(r);
+      if (nd){ pushNumber(nd,r); ok++; } else fail++;
+      await sleep(600);
     }
-    let ok=0, fail=0;
-    for (const r of rids) {
-      const nd = await apiGetNumber(r);
-      if (nd) { pushNumber(nd, r); ok++; } else fail++;
-      await sleep(500);
-    }
-    res.textContent = `✅ Berhasil: ${ok} | ❌ Gagal: ${fail}`;
+    res.textContent = `✅ Got: ${ok} | ❌ Failed: ${fail}`;
   } else {
-    const nd = await apiGetNumber(rid);
-    if (nd) {
+    const nd = await apiGetNum(rid);
+    if (nd){
       pushNumber(nd, rid);
       res.textContent = `✅ ${nd.full_number} (${nd.country})`;
-      showToast('Nomor berhasil diambil');
+      toast('Number allocated: ' + nd.full_number);
     } else {
       res.style.color = 'var(--red)';
-      res.textContent = '❌ RID tidak valid atau stok habis.';
+      res.textContent = '❌ RID invalid or out of stock.';
     }
   }
   btn.disabled = false;
-  btn.innerHTML = '<i class="ti ti-bolt"></i> Ambil sekarang';
-  loadNumbers(); updateCounts();
+  btn.innerHTML = '⚡ Get Number';
+  renderNumbers(); updateDots();
 }
 
-function pushNumber(nd, rid) {
+async function apiGetNum(rid){
+  try {
+    const res = await apiPost('/getnum',{ rid });
+    if (res?.meta?.code === 200) return res.data;
+  } catch(e){}
+  return null;
+}
+
+function pushNumber(nd, rid){
   const ta = new Date().toISOString();
   numbers.unshift({
-    full_number: nd.full_number, national_number: nd.national_number,
-    country: nd.country || 'Unknown', operator: nd.operator || 'Unknown',
-    rid, taken_at: ta, status: 'active', otp_status: 'pending', otp_message: null
+    full_number: nd.full_number,
+    national_number: nd.national_number || nd.full_number,
+    country: nd.country || 'Unknown',
+    operator: nd.operator || '—',
+    rid, taken_at: ta, status:'active',
+    otp_status:'pending', otp_code: null
   });
-  setTimeout(() => expireNumber(nd.full_number), 20*60*1000);
+  // auto-expire after 20 min
+  setTimeout(()=>{
+    numbers = numbers.map(n =>
+      n.full_number===nd.full_number && n.status==='active'
+        ? {...n, status:'expired'} : n
+    );
+    renderNumbers(); updateDots();
+    toast('⏰ Expired: ' + nd.full_number);
+  }, 20*60*1000);
+  renderNumbers(); updateDots();
 }
 
-function expireNumber(fn) {
-  numbers = numbers.map(n =>
-    n.full_number === fn && n.status === 'active' ? {...n, status:'expired'} : n
-  );
-  updateCounts(); loadNumbers();
-  showToast('Nomor ' + fn + ' expired');
-}
-
-function generateRids(pattern) {
+function generateRids(pattern, max){
   if (!pattern.toLowerCase().includes('x')) return [pattern];
-  const pos = [...pattern].map((c,i) => c.toLowerCase()==='x'?i:-1).filter(i=>i>=0);
+  const pos = [...pattern].map((c,i)=>c.toLowerCase()==='x'?i:-1).filter(i=>i>=0);
   const res = [];
-  const total = Math.pow(10, pos.length);
-  for (let i = 0; i < total; i++) {
+  const total = Math.min(Math.pow(10,pos.length), max||100);
+  for (let i=0;i<total;i++){
     const digits = i.toString().padStart(pos.length,'0').split('');
     const chars  = [...pattern];
-    pos.forEach((p, j) => chars[p] = digits[j]);
+    pos.forEach((p,j)=>chars[p]=digits[j]);
     res.push(chars.join(''));
   }
   return res;
 }
 
-// ══ CONSOLE ══
-async function loadConsole() {
-  const hits = await apiGetConsole();
-  document.getElementById('d-logs').textContent = hits.length;
-
-  const makeRow = h => `
-    <div class="console-row">
-      <div class="console-left">
-        <div class="console-range">${h.range||'-'}</div>
-        <div class="console-msg">${h.message||'-'}</div>
-      </div>
-      <div class="console-right">
-        <span class="pill p-blue">${h.sid||'-'}</span>
-        <span class="console-time">${h.time?fmtTime(h.time):'-'}</span>
-      </div>
-    </div>`;
-
-  const cl  = document.getElementById('console-list');
-  const dcl = document.getElementById('d-console-list');
-
-  if (!hits.length) {
-    const empty = '<div class="empty-state"><i class="ti ti-terminal"></i>Belum ada data console</div>';
-    if (cl)  cl.innerHTML  = empty;
-    if (dcl) dcl.innerHTML = empty;
+// ── RENDER NUMBERS TABLE ──
+function renderNumbers(){
+  const tb = document.getElementById('num-body');
+  if (!numbers.length){
+    tb.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">📱</div>No numbers allocated</div></td></tr>';
     return;
   }
-  if (cl)  cl.innerHTML  = hits.slice(-20).reverse().map(makeRow).join('');
-  if (dcl) dcl.innerHTML = hits.slice(-4).reverse().map(makeRow).join('');
+  tb.innerHTML = numbers.map((n,i) => {
+    const tl  = n.status==='active' ? timeLeft(n.taken_at) : (n.status==='expired'?'Expired':'—');
+    const stCls = n.status==='active'?'p-green':n.status==='expired'?'p-amber':'p-gray';
+    const otpCls = n.otp_status==='success'?'p-green':n.otp_status==='failed'?'p-red':'p-amber';
+    const otpTxt = n.otp_code ? `<div class="otp-code">${n.otp_code}</div>` : `<span class="pill ${otpCls}">${n.otp_status}</span>`;
+    return `<tr>
+      <td>${n.country}</td>
+      <td class="mono">${n.full_number}</td>
+      <td class="mono" style="font-size:11px">${n.rid}</td>
+      <td>${otpTxt}</td>
+      <td style="white-space:nowrap;font-size:12px;color:var(--text2)">${tl}</td>
+      <td><span class="pill ${stCls}">${n.status}</span></td>
+      <td>
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-xs btn-green" onclick="pollOtp(${i})" title="Check OTP">🔑</button>
+          <button class="btn btn-xs btn-danger" onclick="delNumber(${i})" title="Delete">🗑</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
 }
 
-function toggleLive() {
-  if (liveInterval) {
-    clearInterval(liveInterval); liveInterval = null;
-    document.getElementById('live-label').textContent = 'Start live';
-    document.getElementById('live-icon').className    = 'ti ti-player-play';
-    document.getElementById('console-title').innerHTML = '<i class="ti ti-terminal"></i> Console — 15 menit terakhir';
+function delNumber(i){
+  numbers.splice(i,1);
+  renderNumbers(); updateDots();
+  toast('Number removed');
+}
+
+function clearAll(){
+  if (!numbers.length) return;
+  numbers = [];
+  renderNumbers(); updateDots();
+  toast('Cleared all numbers');
+}
+
+// ── OTP POLLING ──
+async function pollOtp(i){
+  const n = numbers[i];
+  if (!n) return;
+  try {
+    const hits = await apiGetConsole();
+    const match = hits.find(h => h.range && h.range.includes(n.rid));
+    if (match && match.message){
+      const code = extractOtp(match.message);
+      numbers[i].otp_status = 'success';
+      numbers[i].otp_code   = code || match.message;
+      otpLogCache.unshift({ number: n.full_number, code: numbers[i].otp_code, time: new Date().toISOString(), rid: n.rid });
+      toast('✅ OTP: ' + numbers[i].otp_code);
+      document.getElementById('dot-otp').className = 'tab-dot show';
+    } else {
+      numbers[i].otp_status = 'pending';
+      toast('⏳ No OTP yet for ' + n.full_number);
+    }
+  } catch(e){
+    numbers[i].otp_status = 'failed';
+  }
+  renderNumbers(); updateDots();
+}
+
+async function pollAllOtp(){
+  toast('🔄 Checking all OTPs...');
+  for (let i=0;i<numbers.length;i++){
+    if (numbers[i].status==='active' && numbers[i].otp_status==='pending'){
+      await pollOtp(i);
+      await sleep(400);
+    }
+  }
+}
+
+function extractOtp(msg){
+  const m = msg.match(/\b(\d{4,8})\b/);
+  return m ? m[1] : msg;
+}
+
+// ── AUTO REFRESH ──
+function startAutoRefresh(){
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = setInterval(async ()=>{
+    await pollAllOtp();
+    renderNumbers(); updateDots();
+  }, 3000);
+}
+
+// ── CONSOLE ──
+async function apiGetConsole(){
+  try {
+    const res = await apiGet('/console');
+    if (res?.meta?.code===200) return res.data?.hits || [];
+  } catch(e){}
+  return [];
+}
+
+async function loadConsole(){
+  const body = document.getElementById('console-body');
+  body.innerHTML = '<div class="loading-row"><div class="spinner"></div>Loading...</div>';
+  const hits = await apiGetConsole();
+  if (!hits.length){
+    body.innerHTML = '<div class="empty"><div class="empty-icon">🖥</div>No console data</div>';
+    return;
+  }
+  body.innerHTML = hits.slice(-30).reverse().map(h=>`
+    <div class="c-row">
+      <div class="c-left">
+        <div class="c-range">${h.range||'—'}</div>
+        <div class="c-msg">${h.message||'—'}</div>
+      </div>
+      <div class="c-right">
+        <span class="pill p-blue">${h.sid||'—'}</span>
+        <span class="c-time">${h.time?fmtTime(h.time):'—'}</span>
+      </div>
+    </div>`).join('');
+}
+
+function toggleLive(){
+  if (liveTimer){
+    clearInterval(liveTimer); liveTimer=null;
+    document.getElementById('btn-live').textContent = '▶ Start Live';
+    document.getElementById('console-title').innerHTML = '🖥 Global Console Feed';
   } else {
-    document.getElementById('live-label').textContent = 'Stop live';
-    document.getElementById('live-icon').className    = 'ti ti-player-pause';
+    document.getElementById('btn-live').innerHTML = '<span class="live-dot"></span> Stop Live';
     document.getElementById('console-title').innerHTML = '<span class="live-dot"></span> Console — LIVE';
-    liveInterval = setInterval(loadConsole, 5000);
+    liveTimer = setInterval(loadConsole, 5000);
     loadConsole();
   }
 }
 
-// ══ OTP ══
-async function loadOtp(tab) {
-  currentOtpTab = tab;
-  ['pending','success','failed'].forEach(t => {
-    document.getElementById('otp-tab-' + t).className = 'tab-btn' + (t === tab ? ' active' : '');
-  });
-  const ol = document.getElementById('otp-list');
-  ol.innerHTML = '<div class="loading"><div class="spinner"></div>Memuat...</div>';
-
-  if (tab === 'success') {
-    const otps = await apiGetSuccessOtp();
-    if (!otps.length) {
-      ol.innerHTML = '<div class="empty-state"><i class="ti ti-key"></i>Belum ada OTP berhasil</div>';
+// ── OTP LOG ──
+async function loadOtpSuccess(){
+  const body = document.getElementById('otp-body');
+  body.innerHTML = '<div class="loading-row"><div class="spinner"></div>Loading...</div>';
+  try {
+    const res = await apiGet('/success-otp');
+    const otps = res?.data?.otps || [];
+    if (!otps.length && !otpLogCache.length){
+      body.innerHTML = '<div class="empty"><div class="empty-icon">🔑</div>No OTP history yet</div>';
       return;
     }
-    ol.innerHTML = otps.slice(0,20).map(o => `
-      <div class="prem-row">
-        <div>
-          <div class="prem-name">${o.number||'-'}</div>
-          <div class="prem-meta">${o.message||'-'}</div>
+    // merge API + local cache
+    const all = [...otpLogCache, ...otps.map(o=>({ number:o.number, code:o.message, time:o.time, rid:'api' }))];
+    body.innerHTML = all.slice(0,30).map(o=>`
+      <div class="c-row">
+        <div class="c-left">
+          <div class="c-range">${o.number||'—'}</div>
+          <div class="otp-code" style="font-size:16px;margin-top:4px">${o.code||'—'}</div>
         </div>
-        <span class="console-time">${o.time?fmtTime(o.time):'-'}</span>
-      </div>`).join('');
-  } else {
-    const nums = numbers.filter(n => n.otp_status === tab);
-    if (!nums.length) {
-      ol.innerHTML = `<div class="empty-state"><i class="ti ti-key"></i>Tidak ada nomor ${tab}</div>`;
-      return;
-    }
-    ol.innerHTML = nums.map(n => `
-      <div class="prem-row">
-        <div>
-          <div class="prem-name">${n.full_number}</div>
-          <div class="prem-meta">${n.country} · ${n.operator} · ${n.rid}</div>
-          ${n.otp_message?`<div style="font-size:12px;color:var(--green);margin-top:4px;font-weight:600">OTP: ${n.otp_message}</div>`:''}
+        <div class="c-right">
+          <span class="pill p-green">success</span>
+          <span class="c-time">${o.time?fmtTime(o.time):'—'}</span>
         </div>
-        <span class="pill ${tab==='success'?'p-green':'p-amber'}">${tab}</span>
       </div>`).join('');
+  } catch(e){
+    body.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div>Failed to load OTP log</div>';
   }
 }
 
-function otpTab(tab) { loadOtp(tab); }
-
-// ══ OWNER ══
-function checkOwnerAccess() {
-  // Owner panel accessible via URL param: ?owner=OWNER_ID
-  const params = new URLSearchParams(window.location.search);
-  const uid    = params.get('owner');
-  if (uid && uid === OWNER_ID) {
-    document.getElementById('nav-owner').style.display = '';
-  }
+function clearOtpLog(){
+  otpLogCache = [];
+  loadOtpSuccess();
+  toast('OTP log cleared');
 }
 
-function renderOwner() {
-  document.getElementById('o-prem-count').textContent = Object.keys(premiumUsers).length;
-  document.getElementById('o-limit').textContent      = freeLimit;
-  renderPremList();
-}
-function toggleBot()     {
-  botOn = !botOn;
-  document.getElementById('bot-sw').className  = 'toggle-sw' + (botOn?' on':'');
-  document.getElementById('bot-lbl').textContent = botOn ? 'ON' : 'OFF';
-}
-function toggleMonitor() {
-  monOn = !monOn;
-  document.getElementById('mon-sw').className  = 'toggle-sw' + (monOn?' on':'');
-  document.getElementById('mon-lbl').textContent = monOn ? 'ON' : 'OFF';
-}
-function chLimit(d) {
-  freeLimit = Math.max(1, freeLimit + d);
-  document.getElementById('o-limit').textContent = freeLimit;
-}
-function addPrem() {
-  const uid   = document.getElementById('p-uid').value.trim();
-  const days  = parseInt(document.getElementById('p-days').value) || 30;
-  const uname = document.getElementById('p-uname').value.trim() || ('@user' + uid);
-  if (!uid) return;
-  premiumUsers[uid] = { expire: new Date(Date.now()+days*86400000).toISOString(), username: uname };
-  document.getElementById('p-uid').value = '';
-  document.getElementById('add-prem-form').style.display = 'none';
-  renderOwner(); showToast('Premium ditambahkan: ' + uname);
-}
-function removePrem(uid) {
-  delete premiumUsers[uid];
-  renderOwner(); showToast('Premium dihapus');
-}
-function renderPremList() {
-  const pl   = document.getElementById('prem-list');
-  const keys = Object.keys(premiumUsers);
-  if (!keys.length) {
-    pl.innerHTML = '<div class="empty-state"><i class="ti ti-star"></i>Belum ada user premium</div>';
+function filterOtp(status){
+  const body = document.getElementById('otp-filter-body');
+  let filtered = status==='all' ? numbers : numbers.filter(n=>n.otp_status===status);
+  if (!filtered.length){
+    body.innerHTML = `<div class="empty"><div class="empty-icon">🔑</div>No ${status==='all'?'':status} entries</div>`;
     return;
   }
-  pl.innerHTML = keys.map(uid => `
-    <div class="prem-row">
-      <div>
-        <div class="prem-name">${premiumUsers[uid].username}</div>
-        <div class="prem-meta">${uid}</div>
-        <div style="font-size:11px;color:var(--text2);margin-top:2px">
-          Expired: ${new Date(premiumUsers[uid].expire).toLocaleDateString('id-ID')}
-        </div>
+  const cls = status==='success'?'p-green':status==='failed'?'p-red':status==='pending'?'p-amber':'p-gray';
+  body.innerHTML = filtered.map(n=>`
+    <div class="c-row">
+      <div class="c-left">
+        <div class="c-range">${n.full_number}</div>
+        <div class="c-msg">${n.country} · ${n.operator} · RID: ${n.rid}</div>
+        ${n.otp_code?`<div class="otp-code" style="font-size:16px;margin-top:4px">${n.otp_code}</div>`:''}
       </div>
-      <button class="btn btn-sm btn-danger" onclick="removePrem('${uid}')"><i class="ti ti-trash"></i></button>
+      <div class="c-right">
+        <span class="pill ${cls}">${n.otp_status}</span>
+        <span class="c-time">${fmtTime(n.taken_at)}</span>
+      </div>
     </div>`).join('');
 }
-function doBroadcast() {
-  const msg   = document.getElementById('bc-msg').value.trim();
-  if (!msg) return;
-  const count = Object.keys(premiumUsers).length;
-  const r     = document.getElementById('bc-res');
-  r.style.display = 'block';
-  r.textContent   = `Broadcast dikirim ke ${count} user premium.`;
-  document.getElementById('bc-msg').value = '';
-  setTimeout(() => r.style.display='none', 4000);
+
+// ── SPAM / AUTO RETRY ──
+function addSpam(){
+  const rid = document.getElementById('inp-spam-rid').value.trim().replace(/xxx$/i,'');
+  if (!rid){ toast('Enter a Range ID'); return; }
+  if (spamMap[rid]){ toast('Already retrying: ' + rid); return; }
+  document.getElementById('inp-spam-rid').value = '';
+  document.getElementById('form-spam').style.display = 'none';
+  startSpam(rid);
+  toast('⚡ Retry started: ' + rid);
 }
 
-// ══ INIT ══
-(async () => {
-  await loadEnv();
-  checkOwnerAccess();
-  await checkApiStatus();
-  setInterval(checkApiStatus, 30000);
-  loadNumbers();
-  loadConsole();
-  updateCounts();
+function startSpam(rid){
+  const started = Date.now();
+  const iv = setInterval(async ()=>{
+    // auto-stop after 20 min
+    if (Date.now() - started > 20*60*1000){
+      stopSpam(rid);
+      toast('⏰ Retry timed out: ' + rid);
+      return;
+    }
+    const nd = await apiGetNum(rid);
+    if (nd){
+      stopSpam(rid);
+      pushNumber(nd, rid);
+      toast('✅ Auto-Retry success: ' + nd.full_number);
+      renderSpam(); updateDots();
+      switchTab('numbers');
+    }
+  }, 3000);
+  spamMap[rid] = { interval: iv, started };
+  renderSpam(); updateDots();
+}
+
+function stopSpam(rid){
+  if (spamMap[rid]){ clearInterval(spamMap[rid].interval); delete spamMap[rid]; }
+  renderSpam(); updateDots();
+}
+
+function stopAllSpam(){
+  Object.keys(spamMap).forEach(stopSpam);
+  toast('All retries stopped');
+}
+
+function renderSpam(){
+  updateDots();
+  const body = document.getElementById('spam-body');
+  const keys = Object.keys(spamMap);
+  if (!keys.length){
+    body.innerHTML = '<div class="empty"><div class="empty-icon">⚡</div>No active retries</div>';
+    return;
+  }
+  body.innerHTML = keys.map(rid=>`
+    <div class="spam-row">
+      <div>
+        <div class="spam-rid">${rid}</div>
+        <div class="spam-meta">
+          <span class="pill p-blue">Retrying</span>
+          every 3s · started ${fmtTime(new Date(spamMap[rid].started).toISOString())}
+        </div>
+      </div>
+      <button class="btn btn-sm btn-danger" onclick="stopSpam('${rid}')">⏹ Stop</button>
+    </div>`).join('');
+}
+
+// ── INIT ──
+(async ()=>{
+  await checkStatus();
+  setInterval(checkStatus, 30000);
+  await loadConsole();
+  startAutoRefresh();
+  updateDots();
 })();
 </script>
 </body>

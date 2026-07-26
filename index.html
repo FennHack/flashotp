@@ -578,18 +578,25 @@ async function fetchConsole() {
     out.innerHTML = `<div class="console-line"><span class="console-time">--:--:--</span><span class="console-provider volts">SYS</span><span class="console-message text-slate-500">No console data available</span></div>`;
     return;
   }
-  out.innerHTML = hits.slice(-40).reverse().map(h=>{
-    const t = h.time ? new Date(h.time).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) : '--:--:--';
+
+  // ⬇️ PERBAIKAN DI SINI ⬇️
+  // Urutkan dari yang terbaru (time terbesar) ke yang terlama
+  const sorted = hits.sort((a, b) => (b.time || 0) - (a.time || 0));
+  // Ambil 40 data terbaru
+  const latest = sorted.slice(0, 40);
+
+  out.innerHTML = latest.map(h => {
+    const t = h.time ? new Date(h.time).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '--:--:--';
     const otpMatch = h.message ? h.message.match(/\b(\d{4,8})\b/) : null;
     const msgHtml = otpMatch
-      ? h.message.replace(otpMatch[0],`<span class="console-otp-badge" onclick="copyText('${otpMatch[0]}')" title="Copy OTP"><i class="fa-solid fa-key text-[9px]"></i>${otpMatch[0]}</span>`)
-      : (h.message||'—');
+      ? h.message.replace(otpMatch[0], `<span class="console-otp-badge" onclick="copyText('${otpMatch[0]}')" title="Copy OTP"><i class="fa-solid fa-key text-[9px]"></i>${otpMatch[0]}</span>`)
+      : (h.message || '—');
     const rangeHtml = h.range
       ? `<span class="console-range-badge" onclick="copyText('${h.range}')" title="Copy range"><i class="fa-solid fa-hashtag text-[9px]"></i>${h.range}</span>`
       : '';
     return `<div class="console-line">
       <span class="console-time">${t}</span>
-      <span class="console-provider volts">${h.sid||'SYS'}</span>
+      <span class="console-provider volts">${h.sid || 'SYS'}</span>
       ${rangeHtml}
       <span class="console-message">${msgHtml}</span>
     </div>`;

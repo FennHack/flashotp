@@ -653,16 +653,6 @@ async function pollOtp(i){
   renderNumbers(); updateDots();
 }
 
-async function pollAllOtp(){
-  toast('🔄 Checking all OTPs...');
-  for (let i=0;i<numbers.length;i++){
-    if (numbers[i].status==='active' && numbers[i].otp_status==='pending'){
-      await pollOtp(i);
-      await sleep(400);
-    }
-  }
-}
-
 function extractOtp(msg){
   const m = msg.match(/\b(\d{4,8})\b/);
   return m ? m[1] : msg;
